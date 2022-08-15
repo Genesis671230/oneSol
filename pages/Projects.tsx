@@ -15,6 +15,7 @@ const Projects = () => {
   const signer = provider.getSigner();
   const contract = new ethers.Contract(contractAddress, runABI, signer);
 
+  
   const [listedJobs, setlistedJobs] = useState<any[]|null>();
   const [accountAddress, setAccountAddress] = useState<string>();
 
@@ -28,6 +29,7 @@ const Projects = () => {
 
     if(listedJobs){
       const jobArr = listedJobs?.map((item: any) => {
+
         const single_Obj: any = Object.entries(item).map(([key, value]) => {
           return { [key]: value };
         });
@@ -103,9 +105,6 @@ const Projects = () => {
     console.log(listedJobs);
   };
 
-  useEffect(() => {
-    listJobsArr();
-  }, []);
   const checkWallet = async () => {
     const { ethereum } = window as any;
     if (ethereum) {
@@ -117,9 +116,14 @@ const Projects = () => {
     }
   };
 
+
   useEffect(() => {
+    listJobsArr();
     checkWallet();  
+
   }, []);
+  
+
 
 
 

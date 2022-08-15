@@ -33,7 +33,7 @@ export default function Hero  (res:any) {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>();
   const [deadline, setDealine] = useState<any>();
-  const [price, setPrice] = useState<any >();
+  const [price, setPrice] = useState<number >();
 
 
 
@@ -105,20 +105,9 @@ export default function Hero  (res:any) {
 
 
   const PostJobFUN :()=>void = async () => {
-
-    const { ethereum } = window as any;
-  
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, runABI, signer);
-
-    
     try{
-
-
-      const val_ether :any=  ethers.utils.parseEther(price);
-      const listedJobs : any = await contract.PostJob(title, deadline, price, {
-        value: val_ether,
+      const listedJobs : any = await contract.PostJob(title, deadline, 0.0002, {
+        value: ethers.utils.parseEther("0.0002"),
       });
       await listedJobs.wait();
 
@@ -127,23 +116,6 @@ export default function Hero  (res:any) {
     }
   };
 
-  const totalJobs = async () => {
-    const listedJobs = await contract.totalJobSupply();
-    const res = BigNumber.from(listedJobs).toNumber();
-  };
-
-  const applyforjob = async (id: number) => {
-    const listedJobs = await contract.applyForJob(id, { gasLimit: 120000 });
-    await listedJobs.wait();
-    console.log(listedJobs);
-    window.location.reload();
-  };
-
-  const completeJob = async (id: number) => {
-    const listedJobs = await contract.applyForJob(id, { gasLimit: 90000 });
-    await listedJobs.wait();
-    console.log(listedJobs);
-  };
 
 
   const handleClickOpen = () => {
@@ -164,7 +136,7 @@ export default function Hero  (res:any) {
   const checkWallet = async () => {
     const { ethereum } = window as any;
     if (ethereum) {
-      toast.loading('Successfully created!');
+      toast.loading('Connecting metamask!');
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -261,60 +233,6 @@ export default function Hero  (res:any) {
         </div>
       </div>
 
-      {/* <div className=" flex  bg-blue-600 justify-center items-center">
-        <div className="m-10 w-full relative gap-y-10 flex flex-wrap  ">
-          {listedJobs?.map((item: any, index) => (
-            <div key={index}
-              className={`m-10 backdrop-blur-sm h-full  rounded-lg p-5  bg-white/50 ${
-                item?.status == 1 && "w-full"
-              } `}
-            >
-              <div className="font-bold">
-                <span className="mr-5">Job title</span>
-                {item?.title}
-              </div>
-              <div className="">
-                <span className="mr-5 text-sm">Deadline</span> {item?.deadline}
-              </div>
-              <div className="">
-                <span className="mr-5 text-sm">Project price</span>{" "}
-                <span>${item?.price}</span>
-              </div>
-              {item?.hiredFreelancer !=
-              0x0000000000000000000000000000000000000000 ? (
-                <div className="">
-                  <span className="mr-5 text-sm">Hired freelancer</span>{" "}
-                  <span>{item?.hiredFreelancer}</span>
-                </div>
-              ) : null}
-
-              {item?.status == null && (
-                <div className="">
-                  <span className="mr-5 text-sm">
-                    Active
-                    <div onClick={() => applyforjob(index)}>
-                      <button className="rounded-lg bg-red-600 p-3 mt-5 text-white">
-                        Apply for Job
-                      </button>
-                    </div>
-                  </span>
-                </div>
-              )}
-
-              {item?.status == 1 && <span>Pending ...</span>}
-
-              {item?.hiredFreelancer.toUpperCase() ==
-                accountAddress?.toUpperCase() && (
-                <div onClick={() => completeJob(index)}>
-                  <button className="rounded-lg bg-red-600 p-3 mt-5 text-white">
-                    Deliever Project
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div> */}
     </div>
   );
 };
